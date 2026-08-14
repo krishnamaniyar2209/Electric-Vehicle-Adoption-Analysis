@@ -1,21 +1,60 @@
 # 🚗 Electric Vehicle Adoption Analysis (Washington State)
 
-Exploratory data analysis and predictive modeling on **200,048 Washington State electric-vehicle registration records**, covering adoption trends, manufacturer and geographic concentration, and BEV vs. PHEV range behavior.
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-150458?logo=pandas)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Modeling-red?logo=scikit-learn)
+![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange?logo=jupyter)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
 
+> Exploratory data analysis and predictive modeling on **200,048 Washington State electric-vehicle registration records**, covering adoption trends, manufacturer and geographic concentration, and BEV vs. PHEV range behavior.
+>
 > **Data Source:** [Electric Vehicle Population Data](https://data.wa.gov/Transportation/Electric-Vehicle-Population-Data/f6w7-q2d2) — Washington State Department of Licensing, published on data.wa.gov. 200,048 records, 17 columns. Real-world, publicly available registration data.
-
-![EV Adoption Trend](images/ev-adoption-trend.png)
-
-> Registrations climb steeply from 2015 and peak at model year 2023. The fall-off across 2024–2025 reflects **incomplete reporting for recent model years**, not a decline in adoption.
 
 ---
 
-## 🎯 Objectives
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [Highlights](#-highlights)
+- [Demo](#-demo)
+- [Dataset & Preparation](#-dataset--preparation)
+- [Key Findings (EDA)](#-key-findings-eda)
+- [Predictive Modeling](#-predictive-modeling)
+- [Limitations & Next Steps](#️-limitations--next-steps)
+- [Tools & Technologies](#️-tools--technologies)
+- [Repository Structure](#-repository-structure)
+- [How to Run](#-how-to-run)
+- [Author](#-author)
+
+---
+
+## 🎯 Overview
+
+This project analyzes Washington State's electric vehicle registration data to understand adoption trends, vehicle characteristics, manufacturer dominance, and geographic distribution — then builds baseline models on top of that analysis.
+
+**Objectives:**
 - Analyze EV adoption trends over time
 - Compare Battery Electric (BEV) vs. Plug-in Hybrid (PHEV) vehicles
 - Identify leading manufacturers, models, and counties
 - Examine electric-range behavior across vehicle types
 - Build baseline models to predict EV type and electric range
+
+---
+
+## ✨ Highlights
+
+- **Caught a serious selection-bias trap before it could quietly bias every downstream number.** The 90,643-record "range-valid" subset used for range and modeling analysis retains ~100% of PHEVs but only **30.3% of BEVs** — because BEV ranges are far more often left unresearched by WA DOL. Rather than blending this into one misleading set of stats, the project maintains **two parallel tables (full dataset vs. range-valid subset)** throughout and is explicit about which questions each one can answer.
+- **Diagnosed the classification model's 98.9% accuracy instead of just reporting it.** Random Forest feature importance shows `Model` (51%) and `Make` (30%) driving 81% of the prediction — meaning the model is closer to reading a lookup table (a Tesla Model 3 is a BEV by definition) than learning a hard boundary. The README states this plainly and proposes the more meaningful version: predict EV type from geography and MSRP alone, with Make/Model excluded.
+- **Flagged an unfair model comparison most write-ups would miss.** Categorical features are label-encoded as ordinal integers — a non-issue for tree models, but Logistic Regression reads those codes as a continuous scale, quietly handicapping the 82.3% baseline against the trees. The gap is reported as-is rather than framed as proof that trees are inherently stronger here.
+- **Didn't let a weak regression result go unexplained.** The electric-range regression (R² = 0.265) is presented as a baseline that exposes a real data gap — battery capacity and trim-level specs aren't in the source data — rather than as a finished predictor, and `Base MSRP`'s near-zero usefulness (75th percentile = $0) is called out directly.
+
+---
+
+## 🎥 Demo
+
+![EV Adoption Trend](images/ev-adoption-trend.png)
+
+*Registrations climb steeply from 2015 and peak at model year 2023 — the fall-off across 2024–2025 reflects incomplete reporting for recent model years, not a decline in adoption. The full chart set (manufacturer, county, and range breakdowns, plus model comparison and feature importance) is in the [Key Findings](#-key-findings-eda) and [Predictive Modeling](#-predictive-modeling) sections below.*
 
 ---
 
@@ -125,12 +164,22 @@ Categorical vehicle attributes alone are weak predictors of range. Battery capac
 ---
 
 ## 🛠️ Tools & Technologies
-`Python` · `Pandas` · `NumPy` · `Matplotlib` · `Seaborn` · `Scikit-learn` · `Jupyter Notebook`
+
+| Tool | Purpose |
+|---|---|
+| [Python](https://python.org) | Core language |
+| [Pandas](https://pandas.pydata.org/) | Data manipulation |
+| [NumPy](https://numpy.org/) | Numerical operations |
+| [Matplotlib](https://matplotlib.org/) | Visualization |
+| [Seaborn](https://seaborn.pydata.org/) | Statistical visualization |
+| [Scikit-learn](https://scikit-learn.org/) | Modeling & metrics |
+| [Jupyter Notebook](https://jupyter.org/) | Development environment |
 
 ---
 
 ## 📁 Repository Structure
 ```
+Electric-Vehicle-Adoption-Analysis/
 ├── ev-adoption-analysis-and-prediction.ipynb   # Full analysis: EDA, modeling, evaluation
 ├── data/
 │   └── EV_Population_WA_Data.csv               # Download separately (see How to Run)
@@ -172,5 +221,6 @@ Categorical vehicle attributes alone are weak predictors of range. Battery capac
 ---
 
 ## 👤 Author
+
 **Krishna Maniyar**, Data Analyst
 📧 maniyarkrishnakm22@gmail.com · [LinkedIn](https://www.linkedin.com/in/krishnamaniyar2209/) · [Portfolio](https://krishnamaniyar2209.github.io/)
